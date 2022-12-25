@@ -1,0 +1,13 @@
+pipeline {
+    stages{
+        agent any 
+        stage('CheckoutCode'){
+            steps{
+                git credentialsId: '43d1a3b7-29a0-4257-89d9-8e0f9510f2b6', url: 'https://github.com/mukesh3366/jenkins-terraform-ALB.git'
+            }
+        }
+        stage(''){
+
+        }
+    }//stages closing
+}//pipeline closing
