@@ -1,6 +1,6 @@
 variable "ami" {
   type    = string
-  default = "ami-07ffb2f4d65357b42"
+  default = "ami-0cca134ec43cf708f"
 } 
 variable "keyname" {
   default = "final"
