@@ -186,6 +186,14 @@ resource "aws_security_group" "elb_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    description = "HTTP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   egress {
     from_port        = 0
     to_port          = 0
@@ -217,6 +225,14 @@ resource "aws_security_group" "webserver_sg" {
   }
 
   ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    description = "HTTP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -237,9 +253,6 @@ resource "aws_security_group" "webserver_sg" {
   }
 }
 
-data "template_file" "user_data" {
-  template = "${file("userdata.sh")}"
-}
 
 #Create Launch config
 
@@ -267,9 +280,14 @@ resource "aws_launch_configuration" "webserver-launch-config" {
   lifecycle {
     create_before_destroy = true
   }
-  #user_data = filebase64("${path.module}/userdata.sh")
-  user_data = "data.template_file.user_data" 
-}
+  user_data = <<EOF
+  #!/bin/bash
+  sudo yum update -y
+  sudo amazon-linux-extras install nginx1 -y
+  sudo systemctl enable nginx
+  sudo systemctl start nginx
+  EOF
+} 
 
 # Create Auto Scaling Group
 resource "aws_autoscaling_group" "Demo-ASG-tf" {
