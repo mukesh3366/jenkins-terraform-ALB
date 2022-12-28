@@ -1,25 +1,31 @@
 pipeline {
+    agent any
     stages{
-        agent any 
         stage('CheckoutCode'){
             steps{
-                git credentialsId: '43d1a3b7-29a0-4257-89d9-8e0f9510f2b6', url: 'https://github.com/mukesh3366/jenkins-terraform-ALB.git'
+                git branch: 'main', credentialsId: '4e465329-5983-466a-b965-10540726f67a', url: 'https://github.com/mukesh3366/jenkins-terraform-ALB.git'
             }
         }
-        stage('DockerBuild'){
+		stage('BuildImagePushToHub'){
             steps{
-                sh 'docker login -u mukesh -p dckr_pat_kxPXQDYtk_9VeDedqqJiXJXR5-M'
-                sh 'docker build -t mukesh36/ngnix-app-terraform:1 .'
-                sh 'docker push mukesh36/ngnix-app-terraform:1' 
-                sh 'docker run -d --name AppTerraContainer mukesh36/ngnix-app-terraform:1'
+                sh "docker build -t mukesh36/ngnix-app-terraform_docker:${env.BUILD_NUMBER} ."
             }
-        }
-        stage('TerraformExecutionFor'){
+        }  
+        stage('logintoDockerHub'){	
+            steps{
+			withCredentials([string(credentialsId: '5e9d8a06-6542-4812-8ee8-4d481fa9ab86', variable: 'password')]) {
+                sh "docker login -u mukesh36 -p ${password}"
+                }
+                sh "docker push mukesh36/ngnix-app-terraform_docker:${env.BUILD_NUMBER}" 
+            }
+        }  
+        stage('TerraformExecutionToBuildServer'){
             steps{
                 sh 'terraform init'
                 sh 'terraform plan'
                 sh 'terraform apply --auto-approve'
             }
-        }
+        } 
+       
     }//stages closing
-}//pipeline closing 
+}//pipeline closing  
