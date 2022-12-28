@@ -22,7 +22,7 @@ resource "aws_subnet" "pub_sub1" {
   tags = {
     Project = "demo-assignment"
     Name    = "public_subnet1"
- }
+  }
 }
 # Create Public Subnet2
 
@@ -33,8 +33,8 @@ resource "aws_subnet" "pub_sub2" {
   map_public_ip_on_launch = true
   tags = {
     Project = "demo-assignment"
-    Name = "public_subnet2" 
- }
+    Name    = "public_subnet2"
+  }
 }
 
 # Create Private Subnet1
@@ -59,7 +59,7 @@ resource "aws_subnet" "prv_sub2" {
 
   tags = {
     Project = "demo-assignment"
-    Name = "private_subnet2"
+    Name    = "private_subnet2"
   }
 }
 
@@ -157,7 +157,7 @@ resource "aws_route_table" "prv_sub2_rt" {
   }
   tags = {
     Project = "demo-assignment"
-    Name = "private subnet2 route table"
+    Name    = "private subnet2 route table"
   }
 }
 
@@ -280,34 +280,28 @@ resource "aws_launch_configuration" "webserver-launch-config" {
   lifecycle {
     create_before_destroy = true
   }
-  user_data = <<EOF
-  #!/bin/bash
-  sudo yum update -y
-  sudo amazon-linux-extras install nginx1 -y
-  sudo systemctl enable nginx
-  sudo systemctl start nginx
-  EOF
+  user_data = "${file("userdata.sh")}"
 } 
 
 # Create Auto Scaling Group
 resource "aws_autoscaling_group" "Demo-ASG-tf" {
-  name		     = "Demo-ASG-tf"
-  desired_capacity   = 1
-  max_size           = 2
-  min_size           = 1
-  force_delete       = true
-  depends_on 	     = [aws_lb.ALB-tf]
-  target_group_arns  =  ["${aws_lb_target_group.TG-tf.arn}"]
-  health_check_type  = "EC2"
+  name                 = "Demo-ASG-tf"
+  desired_capacity     = 1
+  max_size             = 2
+  min_size             = 1
+  force_delete         = true
+  depends_on           = [aws_lb.ALB-tf]
+  target_group_arns    = ["${aws_lb_target_group.TG-tf.arn}"]
+  health_check_type    = "EC2"
   launch_configuration = aws_launch_configuration.webserver-launch-config.name
-  vpc_zone_identifier = ["${aws_subnet.prv_sub1.id}","${aws_subnet.prv_sub2.id}"]
-  
- tag {
+  vpc_zone_identifier  = ["${aws_subnet.prv_sub1.id}", "${aws_subnet.prv_sub2.id}"]
+
+  tag {
     key                 = "Name"
     value               = "Demo-ASG-tf"
     propagate_at_launch = true
-    }
-} 
+  }
+}
 
 # Create Target group
 
@@ -336,7 +330,7 @@ resource "aws_lb" "ALB-tf" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.elb_sg.id]
-  subnets            = [aws_subnet.pub_sub1.id,aws_subnet.pub_sub2.id] 
+  subnets            = [aws_subnet.pub_sub1.id, aws_subnet.pub_sub2.id]
 
   tags = {
     name    = "Demo-AppLoadBalancer-tf"
