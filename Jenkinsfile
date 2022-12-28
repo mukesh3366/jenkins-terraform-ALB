@@ -22,8 +22,8 @@ pipeline {
         stage('TerraformExecutionToBuildServer'){
             steps{
                 sh 'terraform init'
-                sh 'terraform plan --auto-approve'
-                sh 'terraform apply --auto-approve'
+                sh 'terraform plan -auto-approve'
+                sh 'terraform apply -auto-approve'
             } 
         } 
        
