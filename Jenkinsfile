@@ -22,9 +22,9 @@ pipeline {
         stage('TerraformExecutionToBuildServer'){
             steps{
                 sh 'terraform init'
-                sh 'terraform plan'
+                sh 'terraform plan --auto-approve'
                 sh 'terraform apply --auto-approve'
-            }
+            } 
         } 
        
     }//stages closing
