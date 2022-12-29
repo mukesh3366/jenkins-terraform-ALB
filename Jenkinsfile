@@ -1,5 +1,8 @@
 pipeline {
     agent any
+	tools {
+  terraform 'terraform'
+}
     stages{
         stage('CheckoutCode'){
             steps{
@@ -26,7 +29,7 @@ pipeline {
         } 
 	 stage('TerraformPlanAndApply'){
              steps{
-		//sh "terraform plan"
+		sh "terraform plan"
 		sh "terraform apply -auto-approve"
 	    }
 	}
