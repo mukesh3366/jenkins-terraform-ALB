@@ -24,13 +24,13 @@ pipeline {
         }  
         stage('Terraforminit'){
             steps{
-                sh 'terraform init' 
+                sh ("terraform init"); 
             } 
         } 
 	 stage('TerraformPlanAndApply'){
              steps{
-		sh 'terraform plan' 
-		sh 'terraform apply -auto-approve' 
+		sh ("terraform plan"); 
+		//sh 'terraform apply -auto-approve' 
 	    }
 	}
     }//stages closing
