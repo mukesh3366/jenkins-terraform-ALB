@@ -22,16 +22,20 @@ pipeline {
                 sh "docker push mukesh36/ngnix-app-terraform_docker:${env.BUILD_NUMBER}" 
             }
         }  
-        stage('Terraforminit'){
+        stage('terraform format check') {
             steps{
-                sh ("terraform init"); 
-            } 
-        } 
-	 stage('TerraformPlanAndApply'){
-             steps{
-		sh ("terraform plan"); 
-		//sh 'terraform apply -auto-approve' 
-	    }
-	}
+                sh 'terraform fmt'
+            }
+        }
+        stage('terraform Init') {
+            steps{
+                sh 'terraform init'
+            }
+        }
+        stage('terraform apply') {
+            steps{
+                sh 'terraform apply --auto-approve'
+            }
+        }
     }//stages closing
 }//pipeline closing  
