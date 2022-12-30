@@ -16,7 +16,7 @@ pipeline {
         }  
         stage('logintoDockerHub'){	
             steps{
-			withCredentials([string(credentialsId: '5e9d8a06-6542-4812-8ee8-4d481fa9ab86', variable: 'password')]) {
+			withCredentials([string(credentialsId: 'pass_hub', variable: 'password')]) {
                 sh "docker login -u mukesh36 -p ${password}"
                 }
                 sh "docker push mukesh36/ngnix-app-terraform_docker:${env.BUILD_NUMBER}" 
